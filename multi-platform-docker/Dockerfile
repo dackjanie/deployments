@@ -1,14 +1,18 @@
-#
-# cunnie/multi-platform-docker
-#
-# Prints the architecture of the underlying kernel and then exits.
-#
-# To build:
-#
-#   docker buildx build -f Dockerfile -t cunnie/multi-platform-docker --platform linux/arm64/v8,linux/amd64 --push .
-#
-FROM alpine
+# Use the specified base image
+FROM public.ecr.aws/lambda/python:3.11-arm64
 
-LABEL org.opencontainers.image.authors="Brian Cunnie <brian.cunnie@gmail.com>"
+# Copy requirements.txt file to the container
+COPY requirements.txt .
 
-CMD ["uname", "-m"]
+# Install the python requirements from requirements.txt
+RUN python3.11 -m pip install -r requirements.txt 
+
+RUN python3.11 -m pip cache purge
+
+# Copy Python script into the container
+COPY app.py .
+
+EXPOSE 80
+
+# Set the command to run the Python script
+CMD ["app.lambda_handler"]
