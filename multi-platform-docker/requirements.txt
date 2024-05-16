@@ -1,0 +1,2 @@
+# timestream read/write utils
+requests==2.31.0
